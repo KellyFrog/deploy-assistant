@@ -27,6 +27,7 @@ class DeploymentWorkflow:
     
     def __init__(self, config: Dict):
         self.config = config
+        print(config)
         self.steps = []
 
     def generate_workflow(self) -> List[DeploymentStep]:
@@ -53,7 +54,11 @@ class DeploymentWorkflow:
     def _parse_sections(self) -> None:
         """解析文档章节生成基础步骤"""
         for section, data in self.config['sections'].items():
-            for idx, cmd in enumerate(data['commands'], 1):
+            print("----")
+            print(section)
+            print(data)
+            print("----")
+            for idx, cmd in enumerate(data, 1):
                 self.steps.append(
                     DeploymentStep(
                         name=f"{section}_step{idx}",
@@ -66,19 +71,24 @@ class DeploymentWorkflow:
         """检测命令中的依赖关系（示例逻辑）"""
         deps = []
         if 'install' in command:
-            deps.append('environment_check')
+            # deps.append('environment_check')
+            pass
         return deps
 
     def _resolve_dependencies(self) -> None:
         """调整步骤执行顺序满足依赖关系"""
         ordered = []
         pending = self.steps.copy()
+
+        print(pending)
         
         while pending:
             ready = [s for s in pending 
                     if not s.depends_on or 
                     all(d in [o.name for o in ordered] 
                         for d in s.depends_on)]
+            print("ready = ")
+            print(ready)
             if not ready:
                 raise CycleDependencyError("存在循环依赖")
             ordered.extend(ready)
