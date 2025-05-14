@@ -36,7 +36,7 @@ class SecureAPIKeyManager:
         except FileNotFoundError:
             raise ValueError("API key not found. Please set your API key first.")
 
-class LLM:
+class LLMClient:
     """大语言模型交互类"""
     def __init__(self, url: str = 'https://api.siliconflow.cn/v1/', model: str = 'deepseek-ai/DeepSeek-R1'):
         self.url = url
@@ -101,7 +101,7 @@ class LLM:
 
 if __name__ == "__main__":
     # 示例使用
-    llm = LLM()
+    llm = LLMClient()
     
     # 流式响应演示
     print("流式响应演示：")

@@ -56,7 +56,7 @@ class TerminalSimulator:
 
     def write(self, data: str):
         if not self.process.stdin.closed and self.isalive():
-            self.process.stdin.write(data + '\n')
+            self.process.stdin.write(data)
             self.process.stdin.flush()
 
     def readLine(self):

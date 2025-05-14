@@ -1,4 +1,5 @@
 .vscode/
-src/LLM/secret.key
-src/LLM/api_key.enc
+**/secret.key
+**/api_key.enc
 **.pyc
+**/__pycache__

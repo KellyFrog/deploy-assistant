@@ -5,3 +5,60 @@ TODO:
 - 设计合理的快捷调用（如使用 /? 之类的快捷命令）
 - 可能可以在这里控制 Ctrl+C 之类的输入
 """
+
+import re
+from terminal.terminal_simulator import TerminalSimulator
+from LLM.LLM_core import LLMClient
+
+class CLI:
+    def __init__(self, start_command: str):
+        self.terminal = TerminalSimulator(start_command)
+        self.LLMClient = LLMClient()
+        self.console_history = []
+        self.command_history = []
+        self.in_command_line = True
+    
+    def _stdout_listener(self, line: str):
+        self.console_history.append(line)
+        line = line.strip()
+        if re.search(r'PS [A-Za-z]:\\[^>]*>', line):
+            # if(line[-1] == '>'):
+            #     print(line + "!!", end='')
+            # else:
+            #     print(line)
+            self.in_command_line = True
+        # else:
+        print(line)
+        
+    def _stderr_listener(self, line: str):
+        self.console_history.append(line)
+        line = line.strip()
+        print(line)
+
+    def _write(self, cmd : str):
+        if(self.in_command_line):
+            self.command_history.append(cmd)
+        self.in_command_line = False
+        self.terminal.write(cmd + '\r\n')
+        
+    def parse_command(self, cmd: str):
+        cmd = cmd.strip()
+        if(cmd.startswith("??")):
+            print("".join(self.console_history))
+            pass
+        else:
+            self._write(cmd)
+        
+    def run(self):
+        self.terminal.run(self._stdout_listener, self._stderr_listener)
+    
+    def isalive(self):
+        return self.terminal.isalive()
+    
+def CLI_test():
+    cli = CLI("powershell -NoExit -Command \"chcp 65001\"")
+    cli.run()
+    str = 'echo "Hello World"'
+    while cli.isalive():
+        cli.parse_command(str)
+        str = input()
