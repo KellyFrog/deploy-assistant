@@ -1,2 +1,4 @@
 .vscode/
+src/LLM/secret.key
+src/LLM/api_key.enc
 **.pyc

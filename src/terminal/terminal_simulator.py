@@ -98,9 +98,9 @@ class TerminalSimulator:
             self.stderr_thread.join(timeout=0.1)
         self.process.wait()
 
-    def execute(self, command: str):
-        self.write(command + '\n')
-        return self.read()
+    # def execute(self, command: str):
+    #     self.write(command + '\n')
+    #     return self.read()
     
     def isalive(self):
         return self.process.poll() is None
@@ -109,7 +109,7 @@ def print_stripped(str):
     print(str.strip())
 
 if __name__ == "__main__":
-    terminal = TerminalSimulator("powershell -NoExit -Command \"echo 'Hello, World!'\"")
+    terminal = TerminalSimulator("powershell -NoExit -Command \"chcp 65001\"")
     terminal.run(print_stripped, print_stripped)
     while terminal.isalive():
         cmd = input()
