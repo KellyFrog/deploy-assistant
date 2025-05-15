@@ -26,6 +26,7 @@ class CLI:
 	
 	def _stdout_listener(self, line: str):
 		line = line.strip()
+		print_line = True
 		if(line[:16] != 'Active code page'):
 			if(self._is_terminal_prompt(line)):
 				if(line[-1] == '>'):
@@ -41,9 +42,11 @@ class CLI:
 						self.current_out = ''
 				else:
 					self.current_cmd = line
+					print_line = False
 			else:
 				self.current_out += line + '\n'
-		print(line)
+		if print_line:
+			print(line)
 		
 	def _stderr_listener(self, line: str):
 		line = line.strip()
