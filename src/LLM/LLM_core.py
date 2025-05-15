@@ -69,7 +69,6 @@ class LLMClient:
         生成文本响应
         :param prompt: 输入的提示文本
         :param stream: 是否使用流式响应
-        :param temperature: 生成温度（0-2）
         :return: 生成器（流式模式）或字符串（非流式模式）
         """
         try:
@@ -95,10 +94,9 @@ class LLMClient:
             if chunk.choices[0].delta.reasoning_content:
                 yield chunk.choices[0].delta.reasoning_content
 
-
     def _handle_full_response(self, response) -> str:
         """处理完整响应"""
-        return response.choices[0].message.reasoning_content + response.choices[0].message.content
+        return response.choices[0].message.content
 
     """"""
 

@@ -34,3 +34,49 @@
 - 实现一个包装好的 LLM 类，包括 Prompt、附加文件、流式返回等功能
 
 推荐试用一下 vscode 的 cline 插件，看别人的 agent 写成了啥样，看看那些地方会遇到问题（主要是遇到依赖问题根本不检测/反复重装环境、交互速度慢），针对部署这一专门需求设计 Prompt。
+
+---
+
+流程：
+
+- 实现模拟终端
+
+- 实现命令行辅助功能（在用户遇到问题的时候生成建议）
+
+  期望结果：在使用该终端的时候默认进行记忆，然后实现一个【获取建议】的功能。这个功能最好的结果是直接生成命令供用户进行执行（并附上简要解释），在有必要（或者用户想）的时候需要用户提供额外的一些信息。
+
+  - LLM 交互模块
+    - 简单实现一个交互的接口
+  - Agent 模块
+    - 一些必要的和本地文件的一些交互（比如读取目录下列表以及环境信息等）
+  - 记忆模块
+    - 短期记忆：近期若干个命令&返回值的直接记录
+    - 中短期记忆：将命令行的历史记录进行总结，然后存储
+    - 长期记忆：用户设备环境和个人画像
+  - 安全模块
+    - 区分 LLM 所提出的建议的安全程度
+    - 对提出的方案进行自我质疑和批判
+
+- 实现对github特化的一键部署
+
+  期望结果：实现【Github 项目部署】功能，利用 Github project 的 readme 文件，生成下载步骤的一个计划，然后利用前面的功能进行自动部署。
+
+  - 方法：先根据 readme 判断如何下载（比如直接 clone，还是有release可以直接用），然后下载之后，形成一个计划，分解成若干个步骤。
+  - 对于每一个步骤，用一定的prompt去调用【获取建议】，然后进行操作
+
+- 实现一个 GUI
+
+---
+
+函数意义：
+
+- LLM
+  - LLM_handler.LLMHandler
+    - print_response_stream：用流输出的方式输出 response，并返回该 response.
+    - gen_response：给定 context, memory, user\_comment，向 llm 发送 prompt，并打印并返回回答. 回答有两种情况，一种是需要用户进一步回答问题，另一种是直接给出command.
+    - response_parser：对 response 进行解析. 最终结果应该是一个 `("command",[(command, explanation, warning/comment)])`，或者一个 `("ask",quesion)`.
+- agent
+  - agent.Agent
+    - gen_env_context：生成环境信息. 应该别的地方用不到.
+    - gen_suggestion：传入用户的额外评论，以及面对之前可能问的问题的一些回答的 list. 可能会向用户问问题或者执行命令. 如果用户输入 "Q" 那么退出这次的 suggestion 并返回 "none". 否则返回 command.
+    - record_command(command, result, error="")：CLI 每执行一条命令就调用一次 record_command，agent 会将其发送至 memory management.
