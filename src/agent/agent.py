@@ -93,6 +93,5 @@ class Agent:
         #print('>>> current command = '+command)
         #print('>>> result = '+result)
         self.MemoryManager.update_command_history(command,{'output':output, 'status':status})
-        pass
 
 

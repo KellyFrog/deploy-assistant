@@ -100,6 +100,8 @@ class MemoryManager:
         response = self.llm_client.generate(prompt, stream=False)
         self.medium_term = response
 
+        print("存储成功了！")
+
     def update_long_term_memory(self, env_profile: str = None, user_profile: str = None):
         """更新长期记忆"""
         if env_profile:
