@@ -12,7 +12,7 @@ class MemoryManager:
             "env_profile": "",
             "user_profile": ""
         }
-        self.llm_client = LLMClient()
+        self.llm_client = LLMClient(model = 'Qwen/Qwen2.5-7B-Instruct')
         self._load_long_term_memory()
         self.update_counter = 0  # 用于控制中期记忆更新频率
 
@@ -76,9 +76,10 @@ class MemoryManager:
         """更新中期记忆"""
         if not self.short_term:
             return
+        print('存储中...')
 
         # 构建提示词
-        prompt = "请分析以下命令历史，总结用户的操作模式和习惯（100字以内）：\n"
+        prompt = "请分析以下命令历史，总结用户想做什么和做了些什么（100字以内）：\n"
         for item in self.short_term:
             # 只提取命令的实际输出，过滤掉提示符等无关信息
             output = item['result'].get('output', '')

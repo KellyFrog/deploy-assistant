@@ -38,14 +38,14 @@ class Agent:
         header = f"\n{' 可用命令列表 ':=^40}"
         print(header)
         m = len(tmp)
-        print(tmp)
+        #print(tmp)
         for i in range(m):
             (cmd, exp, note) = tmp[i]
             output = [
                 f"【选项 {i}】",
                 f"▶ 命令：{cmd}",
                 f"✏️ 说明：{exp}",
-                f"❗️ 注意：{note}",
+                f"❗️ 注意：{note}",    
                 "-"*30
             ]
             print("\n".join(output))

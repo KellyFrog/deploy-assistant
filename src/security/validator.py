@@ -5,7 +5,7 @@ import re
 class SecurityChecker:
     def __init__(self):
         self.risk_threshold = Settings.RISK_THRESHOLD
-        self.llm_client = LLMClient(model = 'deepseek-ai/DeepSeek-V3')
+        self.llm_client = LLMClient(model = 'Qwen/Qwen2.5-7B-Instruct')
         # 危险命令关键词列表
         self.dangerous_keywords = [
             "rm", "del", "remove", "delete",  # 删除文件
@@ -40,7 +40,6 @@ class SecurityChecker:
         if not has_dangerous_keyword:
             return {
                 "risk_level": "low",
-                "safe_alternative": suggestion,
                 "warning": "",
                 "confirmation_required": False
             }
@@ -53,9 +52,8 @@ class SecurityChecker:
 
 请从以下几个方面分析：
 1. 命令的风险等级（high/medium/low）
-2. 是否存在更安全的替代方案
-3. 具体的风险警告信息
-4. 是否需要用户确认
+2. 具体的风险警告信息
+3. 是否需要用户确认
 
 请以JSON格式返回，格式如下：
 {{

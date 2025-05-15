@@ -29,15 +29,16 @@ class CLI:
 		if(line[:16] != 'Active code page'):
 			if(self._is_terminal_prompt(line)):
 				if(line[-1] == '>'):
-					status = 'success'
-					output = self.current_out
-					if(self.current_err != ''):
-						output += '错误信息：'+self.current_err
-						status = 'error'
-					self.Agent.record_command(self.current_cmd, output, status)
-					self.current_cmd = ''
-					self.current_err = ''
-					self.current_out = ''
+					if(self.current_cmd != ''):
+						status = 'success'
+						output = self.current_out
+						if(self.current_err != ''):
+							output += '错误信息：'+self.current_err
+							status = 'error'
+						self.Agent.record_command(self.current_cmd, output, status)
+						self.current_cmd = ''
+						self.current_err = ''
+						self.current_out = ''
 				else:
 					self.current_cmd = line
 			else:
