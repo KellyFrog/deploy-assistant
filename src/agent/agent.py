@@ -43,7 +43,7 @@ class Agent:
             if(str == "Q"):
                 return "none"
             else:
-                gen_suggestion(user_comment, user_response.append((tmp, str)))
+                return self.gen_suggestion(user_comment, user_response + [(tmp, str)])
         else:
             header = f"\n{' 可用命令列表 ':=^40}"
             print(header)
