@@ -48,8 +48,7 @@ class CLI:
             response_stream = self.LLMClient.generate(
                 "下面给出用户最近的若干次在windws powershell中的命令，请尽可能简要分析对于每条命令用户做\
                     了什么以及是否遇到了问题，每条命令20个字以内：\n".join(self.console_history), 
-                stream=True,
-                temperature=0.5
+                stream=True
             )
             self.LLMClient.print_response_stream(response_stream)
             pass

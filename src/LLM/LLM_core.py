@@ -3,6 +3,7 @@ import certifi
 from cryptography.fernet import Fernet
 from openai import OpenAI
 from typing import Generator, Optional
+from config.settings import Settings
 
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
@@ -43,6 +44,7 @@ class LLMClient:
         self.model = model
         self.key_manager = SecureAPIKeyManager()
         self._init_client()
+        self.temperature = Settings.LLM_TEMPURATURE
 
     def _init_client(self) -> None:
         """初始化OpenAI客户端"""
@@ -62,7 +64,6 @@ class LLMClient:
         self,
         prompt: str,
         stream: bool = False,
-        temperature: float = 0.7
     ) -> Generator[str, None, None] | str:
         """
         生成文本响应
@@ -76,7 +77,7 @@ class LLMClient:
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 stream=stream,
-                temperature=temperature
+                temperature=self.temperature
             )
 
             if stream:
@@ -117,7 +118,6 @@ if __name__ == "__main__":
     response_stream = llm.generate(
         "用100字解释量子计算的基本原理", 
         stream=True,
-        temperature=0.5
     )
     
     full_response = []
