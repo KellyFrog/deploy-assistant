@@ -15,25 +15,29 @@ class CLI:
         self.terminal = TerminalSimulator(start_command)
         self.LLMClient = LLMClient()
         self.console_history = []
+        self.current_command_output = ''
         self.command_history = []
         self.in_command_line = True
+
+    def _is_terminal_prompt(self, line: str):
+        return re.search(r'PS [A-Za-z]:\\[^>]*>', line)
     
     def _stdout_listener(self, line: str):
-        self.console_history.append(line)
         line = line.strip()
-        if re.search(r'PS [A-Za-z]:\\[^>]*>', line):
-            # if(line[-1] == '>'):
-            #     print(line + "!!", end='')
-            # else:
-            #     print(line)
-            self.in_command_line = True
-        # else:
+        if(self._is_terminal_prompt(line)):
+            if len(self.current_command_output) > 0:
+                self.console_history.append(self.current_command_output)
+                self.current_command_output = ''
+            if line[-1] != '>': # Non-Empty command line
+                self.current_command_output += line + '\n'
+        else:
+            self.current_command_output += line + '\n'
         print(line)
         
-    def _stderr_listener(self, line: str):
-        self.console_history.append(line)
-        line = line.strip()
-        print(line)
+    # def _stderr_listener(self, line: str):
+    #     self.console_history.append(line)
+    #     line = line.strip()
+    #     print(line)
 
     def _write(self, cmd : str):
         if(self.in_command_line):
@@ -45,18 +49,24 @@ class CLI:
         cmd = cmd.strip()
         if(cmd.startswith("??")):
             #print("".join(self.console_history))
-            response_stream = self.LLMClient.generate(
-                "下面给出用户最近的若干次在windws powershell中的命令，请尽可能简要分析对于每条命令用户做\
-                    了什么以及是否遇到了问题，每条命令20个字以内：\n".join(self.console_history), 
-                stream=True
-            )
-            self.LLMClient.print_response_stream(response_stream)
+            for str in self.console_history:
+                print(f"[\n{str}\n]")
+            self._write("")
+            # response_stream = self.LLMClient.generate(
+            #     "下面给出用户最近的若干次在windws powershell中的命令，请尽可能简要分析对于每条命令用户做\
+            #         了什么以及是否遇到了问题，每条命令20个字以内：\n".join(self.console_history), 
+            #     stream=True
+            # )
+            # self.LLMClient.print_response_stream(response_stream)
             pass
         else:
             self._write(cmd)
+    
+    def keyBoardInterrupt(self):
+        self._write("\003")
         
     def run(self):
-        self.terminal.run(self._stdout_listener, self._stderr_listener)
+        self.terminal.run(self._stdout_listener, self._stdout_listener)
     
     def isalive(self):
         return self.terminal.isalive()
@@ -64,7 +74,10 @@ class CLI:
 def CLI_test():
     cli = CLI("powershell -NoExit -Command \"chcp 65001\"")
     cli.run()
-    str = 'echo "Hello World"'
+    str = 'echo "Hello World"\n'
     while cli.isalive():
-        cli.parse_command(str)
-        str = input()
+        try:
+            cli.parse_command(str)
+            str = input()
+        except KeyboardInterrupt:
+            cli.keyBoardInterrupt()

@@ -24,7 +24,6 @@ class TerminalSimulator:
         # 检查流是否已关闭或running状态，避免阻塞
         while self.running:
             line = stream.readline()
-            # print(f"{'[stderr]' if is_error else '[stdout]'} {line.strip()}", end = '\n')
             func(line)
             if not line:  # 流关闭时退出循环
                 break
@@ -59,29 +58,6 @@ class TerminalSimulator:
             self.process.stdin.write(data)
             self.process.stdin.flush()
 
-    def readLine(self):
-        try:
-            return self.output_queue.get_nowait()
-        except queue.Empty:
-            return None, None
-
-    # def read(self):
-    #     output = []
-    #     c = 0
-    #     while True:
-    #         line, is_error = self.readLine()
-    #         if line is None:
-    #             continue
-    #         # 检查命令提示符
-    #         if re.search(r'PS [A-Za-z]:\\[^>]*>', line):
-    #             c += 1
-    #             if c == 1:
-    #                 pass
-    #             if c == 2:
-    #                 return (output, line)
-    #         else:
-    #             output.append((line, is_error))
-
     def close(self):
         self.running = False
         # 先终止进程以确保流关闭
@@ -98,10 +74,6 @@ class TerminalSimulator:
             self.stderr_thread.join(timeout=0.1)
         self.process.wait()
 
-    # def execute(self, command: str):
-    #     self.write(command + '\n')
-    #     return self.read()
-    
     def isalive(self):
         return self.process.poll() is None
     
