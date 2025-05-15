@@ -60,7 +60,12 @@ class CLI:
             #     stream=True
             # )
             # self.LLMClient.print_response_stream(response_stream)
+<<<<<<< HEAD
             print(self.Agent.gen_suggestion());
+=======
+            # print(self.Agent.gen_suggestion());
+            print(self.Agent.gen_suggestion(user_comment="如何利用pip安装open3d库"));
+>>>>>>> origin/master
             pass
         else:
             self._write(cmd)

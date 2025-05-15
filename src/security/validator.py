@@ -1,10 +1,14 @@
 from config.settings import Settings
+<<<<<<< HEAD
 from LLM.LLM_core import LLMClient
 import re
+=======
+>>>>>>> origin/master
 
 class SecurityChecker:
     def __init__(self):
         self.risk_threshold = Settings.RISK_THRESHOLD
+<<<<<<< HEAD
         self.llm_client = LLMClient()
         # 危险命令关键词列表
         self.dangerous_keywords = [
@@ -26,6 +30,13 @@ class SecurityChecker:
         """
         验证建议命令的安全性
         先检测关键词 检测到危险关键词时 再调用 LLM 判定命令是否危险 否则可以直接判定为安全
+=======
+
+    @staticmethod
+    def validate_command(suggestion: str) -> dict:
+        """
+        验证建议命令的安全性
+>>>>>>> origin/master
         返回：
         {
             "risk_level": "high|medium|low",
@@ -34,6 +45,7 @@ class SecurityChecker:
             "confirmation_required": True/False
         }
         """
+<<<<<<< HEAD
         # 检查是否包含危险关键词
         has_dangerous_keyword = any(keyword in suggestion.lower() for keyword in self.dangerous_keywords)
         
@@ -94,3 +106,11 @@ class SecurityChecker:
             elif response in ['n', 'no', 'N', 'No', 'NO']:
                 return False
             print("请输入 y 或 n")
+=======
+    @staticmethod
+    def get_confirmation(prompt: str) -> bool:
+        """
+        获取用户确认（用于高风险操作）
+        返回：用户确认结果（True/False）
+        """
+>>>>>>> origin/master
