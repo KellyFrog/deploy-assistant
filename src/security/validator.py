@@ -1,15 +1,11 @@
 from config.settings import Settings
-<<<<<<< HEAD
 from LLM.LLM_core import LLMClient
 import re
-=======
->>>>>>> origin/master
 
 class SecurityChecker:
     def __init__(self):
         self.risk_threshold = Settings.RISK_THRESHOLD
-<<<<<<< HEAD
-        self.llm_client = LLMClient()
+        self.llm_client = LLMClient(model = 'deepseek-ai/DeepSeek-V3')
         # 危险命令关键词列表
         self.dangerous_keywords = [
             "rm", "del", "remove", "delete",  # 删除文件
@@ -30,13 +26,6 @@ class SecurityChecker:
         """
         验证建议命令的安全性
         先检测关键词 检测到危险关键词时 再调用 LLM 判定命令是否危险 否则可以直接判定为安全
-=======
-
-    @staticmethod
-    def validate_command(suggestion: str) -> dict:
-        """
-        验证建议命令的安全性
->>>>>>> origin/master
         返回：
         {
             "risk_level": "high|medium|low",
@@ -45,7 +34,6 @@ class SecurityChecker:
             "confirmation_required": True/False
         }
         """
-<<<<<<< HEAD
         # 检查是否包含危险关键词
         has_dangerous_keyword = any(keyword in suggestion.lower() for keyword in self.dangerous_keywords)
         
@@ -58,6 +46,7 @@ class SecurityChecker:
             }
 
         # 构建提示词
+        print("检测命令安全性中...")
         prompt = f"""请分析以下命令的安全性，并给出建议：
 
 命令：{suggestion}
@@ -71,7 +60,6 @@ class SecurityChecker:
 请以JSON格式返回，格式如下：
 {{
     "risk_level": "high|medium|low",
-    "safe_alternative": "替代命令",
     "warning": "警告信息",
     "confirmation_required": true/false
 }}"""
@@ -88,7 +76,6 @@ class SecurityChecker:
             # 如果解析失败，返回保守的结果
             return {
                 "risk_level": "high",
-                "safe_alternative": "",
                 "warning": "命令包含潜在风险，建议谨慎执行",
                 "confirmation_required": True
             }
@@ -106,11 +93,3 @@ class SecurityChecker:
             elif response in ['n', 'no', 'N', 'No', 'NO']:
                 return False
             print("请输入 y 或 n")
-=======
-    @staticmethod
-    def get_confirmation(prompt: str) -> bool:
-        """
-        获取用户确认（用于高风险操作）
-        返回：用户确认结果（True/False）
-        """
->>>>>>> origin/master
