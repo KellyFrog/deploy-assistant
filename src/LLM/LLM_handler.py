@@ -24,6 +24,19 @@ class LLMHandler:
 	def gen_response(self, context, memory, user_comment="", user_response=[]):
 		prompt = ""
 
+		# add context
+		prompt = prompt + \
+			"先向你提供环境信息。这些信息为了让你明白当前目录在哪，以及操作系统信息。" + \
+			"不需要，也不允许针对这些信息发问！他们只是我固定提供给你的前置知识。" + \
+			"如果我在下文没有给出问题或不能明确需求，请向我提问！"
+		prompt = prompt + \
+			f"当前文件目录：{context["cwd"]}。" + \
+			f"当前目录下文件和文件夹名字列表：{context["dir_contents"]}。" + \
+			f"操作系统名称：{context["system_info"]["os"]}" + \
+			f"操作系统的发布版本：{context["system_info"]["os_release"]}"
+		prompt = prompt + \
+			"所有环境信息提供完毕！"
+
 		# add memory
 		any_memory = False
 		if memory["short_term"] != []:
@@ -74,6 +87,7 @@ class LLMHandler:
 			"如果你觉得用户用词模糊，或不足够清楚自己要做什么任务，或者在执行中遇到困难，或者遇到了未能处理的问题。" + \
 			"请先返回一个'0'，然后返回一个疑问句，即你的询问，然后不再给出任何内容！询问后也不用添加ಠ！" + \
 			"否则先返回一个'1'，然后给我提供若干可供接下来执行的选项。" + \
+			"选项不用太多，要求内容精简直接，数量最多五个。" + \
 			"每一个选项的格式是三元组'该选项对应的可供执行的cmd命令ಠ该选项的说明ಠ该选项的注意事项ಠ。" + \
 			"并且三元组都要给出内容，且以ಠ分隔，注意每一项后面都要加ಠ。" + \
 			"所有选项构成列表，每个选项后换行。" + \
