@@ -100,13 +100,6 @@ class LLMClient:
         """处理完整响应"""
         return response.choices[0].message.reasoning_content + response.choices[0].message.content
 
-    def print_response_stream(self, response_stream):
-        full_response = []
-        for chunk in response_stream:
-            print(chunk, end="", flush=True)
-            full_response.append(chunk)
-        print("".join(full_response))
-
     """"""
 
 if __name__ == "__main__":

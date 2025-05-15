@@ -9,6 +9,7 @@ TODO:
 import re
 from terminal.terminal_simulator import TerminalSimulator
 from LLM.LLM_core import LLMClient
+from agent.agent import Agent
 
 class CLI:
     def __init__(self, start_command: str):
@@ -18,6 +19,7 @@ class CLI:
         self.current_command_output = ''
         self.command_history = []
         self.in_command_line = True
+        self.Agent = Agent()
 
     def _is_terminal_prompt(self, line: str):
         return re.search(r'PS [A-Za-z]:\\[^>]*>', line)
@@ -49,15 +51,16 @@ class CLI:
         cmd = cmd.strip()
         if(cmd.startswith("??")):
             #print("".join(self.console_history))
-            for str in self.console_history:
-                print(f"[\n{str}\n]")
-            self._write("")
+            #for str in self.console_history:
+            #    print(f"[\n{str}\n]")
+            #self._write("")
             # response_stream = self.LLMClient.generate(
             #     "下面给出用户最近的若干次在windws powershell中的命令，请尽可能简要分析对于每条命令用户做\
             #         了什么以及是否遇到了问题，每条命令20个字以内：\n".join(self.console_history), 
             #     stream=True
             # )
             # self.LLMClient.print_response_stream(response_stream)
+            print(self.Agent.gen_suggestion());
             pass
         else:
             self._write(cmd)
