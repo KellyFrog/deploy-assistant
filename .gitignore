@@ -1,0 +1,5 @@
+.vscode/
+**/secret.key
+**/api_key.enc
+**.pyc
+**/__pycache__
