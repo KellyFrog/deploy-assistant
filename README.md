@@ -80,3 +80,5 @@
     - gen_env_context：生成环境信息. 应该别的地方用不到.
     - gen_suggestion：传入用户的额外评论，以及面对之前可能问的问题的一些回答的 list. 可能会向用户问问题或者执行命令. 如果用户输入 "Q" 那么退出这次的 suggestion 并返回 "none". 否则返回 command.
     - record_command(command, result, error="")：CLI 每执行一条命令就调用一次 record_command，agent 会将其发送至 memory management.
+
+请注意：换用新的 terminal_simulator.py 之后原有的处理可能失效，请确认这一点，或者你可以现根据上两个版本开发其他的部分。
