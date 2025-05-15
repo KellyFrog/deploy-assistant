@@ -1,4 +1,5 @@
 .vscode/
+tests/
 **/secret.key
 **/api_key.enc
 **.pyc
