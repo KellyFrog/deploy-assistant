@@ -2,12 +2,10 @@ from config.settings import Settings
 from LLM.LLM_core import LLMClient
 
 def next_item (achar):
-	return achar == ';' or achar == '；' or \
-			achar == '{' or achar == '}'
+	return achar == 'ಠ'
 
 def ignor (achar):
-	return achar == "'" or achar == '"' or \
-			next_item (achar) or achar == ' ' or \
+	return next_item (achar) or achar == ' ' or \
 			achar == '\n' or achar == '\r\n'
 
 
@@ -73,11 +71,11 @@ class LLMHandler:
 		# summary
 		prompt = prompt + \
 			"请你结合环境信息、记忆信息、用户需求和补充问题，向我提供回复。" + \
-			"在执行中遇到困难，或者遇到了未能处理的问题。" + \
-			"如果我上面没有给你提供回应信息，请先返回一个'0'，然后返回一个疑问句，即你的询问，然后不再给出任何内容！" + \
+			"如果你觉得用户用词模糊，或不足够清楚自己要做什么任务，或者在执行中遇到困难，或者遇到了未能处理的问题。" + \
+			"请先返回一个'0'，然后返回一个疑问句，即你的询问，然后不再给出任何内容！询问后也不用添加ಠ！" + \
 			"否则先返回一个'1'，然后给我提供若干可供接下来执行的选项。" + \
-			"每一个选项的格式是三元组'{该选项对应的可供执行的cmd命令;该选项的说明;该选项的注意事项}'。" + \
-			"请你注意格式中的花括号{}，并且三元组都要给出内容，且以分号分隔。" + \
+			"每一个选项的格式是三元组'该选项对应的可供执行的cmd命令ಠ该选项的说明ಠ该选项的注意事项ಠ。" + \
+			"并且三元组都要给出内容，且以ಠ分隔，注意每一项后面都要加ಠ。" + \
 			"所有选项构成列表，每个选项后换行。" + \
 			"请以我给你的格式，提供回复。回复中所有的标点符号均为英文符号！"
 		
@@ -99,8 +97,12 @@ class LLMHandler:
 		while ignor (response[idx]):
 			idx = idx + 1
 		response = response[idx : ]
+		print (f"reponse = {response}")
 		if response_type == 0:
-			return ("ask", response)
+			fix = len (response)
+			while next_item (response[fix - 1]):
+				fix = fix - 1
+			return ("ask", response[ : fix])
 		elif response_type == 1:
 			options_list = []
 			limit = len (response)
