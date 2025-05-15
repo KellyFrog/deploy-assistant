@@ -97,7 +97,6 @@ class LLMHandler:
 		while ignor (response[idx]):
 			idx = idx + 1
 		response = response[idx : ]
-		print (f"reponse = {response}")
 		if response_type == 0:
 			fix = len (response)
 			while next_item (response[fix - 1]):
