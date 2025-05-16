@@ -7,54 +7,39 @@ TODO:
 """
 
 import re
+import os
 from terminal.terminal_simulator import TerminalSimulator
 from LLM.LLM_core import LLMClient
 from agent.agent import Agent
 
 class CLI:
 	def __init__(self, start_command: str):
-		self.terminal = TerminalSimulator(start_command)
-		self.LLMClient = LLMClient()
-		self.console_history = []
-		self.current_out = ''
-		self.current_err = ''
-		self.current_cmd = ''
 		self.Agent = Agent()
+		self.terminal = TerminalSimulator(start_command, self._stdout_listener)
+		self.LLMClient = LLMClient()
 
-	def _is_terminal_prompt(self, line: str):
-		return re.search(r'PS [A-Za-z]:\\[^>]*>', line)
+	def clean_ansi(self, text):
+	    regex = r'\x1B\[[0-9;?]*[A-Za-z]'
+	    return re.sub(regex, '', text)
 	
 	def _stdout_listener(self, line: str):
-		line = line.strip()
-		print_line = True
-		if(line[:16] != 'Active code page'):
-			if(self._is_terminal_prompt(line)):
-				if(line[-1] == '>'):
-					if(self.current_cmd != ''):
-						status = 'success'
-						output = self.current_out
-						if(self.current_err != ''):
-							output += '错误信息：'+self.current_err
-							status = 'error'
-						self.Agent.record_command(self.current_cmd, output, status)
-						self.current_cmd = ''
-						self.current_err = ''
-						self.current_out = ''
-				else:
-					self.current_cmd = line
-					print_line = False
-			else:
-				self.current_out += line + '\n'
-		if print_line:
-			print(line)
+		line = self.clean_ansi(line.strip())
+		if(line == 'chcp 65001'):
+			return
+		split_regex = re.compile("\r\n")
+		parts = split_regex.split(line, maxsplit=1)
+		print(parts)
+		if len(parts) < 2:
+			return
+		command = parts[0].strip()
+		if(command == ''):
+			return
+		result = parts[1].strip()
+		self.Agent.record_command(command, result)
 		
-	def _stderr_listener(self, line: str):
-		line = line.strip()
-		self.current_err += line + '\n'
-		print(line)
 
 	def _write(self, cmd : str):
-		self.terminal.write(cmd + '\r\n')
+		self.terminal.write(cmd + '\r')
 		
 	def parse_command(self, cmd: str):
 		cmd = cmd.strip()
@@ -66,17 +51,13 @@ class CLI:
 	
 	def keyBoardInterrupt(self):
 		self._write("\003")
-		
-	def run(self):
-		self.terminal.run(self._stdout_listener, self._stderr_listener)
 	
 	def isalive(self):
 		return self.terminal.isalive()
 	
 def CLI_test():
 	cli = CLI("powershell -NoExit -Command \"chcp 65001\"")
-	cli.run()
-	str = 'echo "Hello World"\n'
+	str = '\n'
 	while cli.isalive():
 		try:
 			cli.parse_command(str)

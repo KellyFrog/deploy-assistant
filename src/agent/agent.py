@@ -89,9 +89,9 @@ class Agent:
             return self.security_protection(self.get_user_choice(tmp))
         
 
-    def record_command(self, command, output, status):
-        #print('>>> current command = '+command)
-        #print('>>> result = '+result)
-        self.MemoryManager.update_command_history(command,{'output':output, 'status':status})
+    def record_command(self, command, output):
+        print('>>>>>> current command = '+command)
+        print('>>>>>> result = '+output)
+        self.MemoryManager.update_command_history(command,{'output':output, 'status':'success'})
 
 

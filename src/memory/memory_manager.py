@@ -31,7 +31,7 @@ class MemoryManager:
             json.dump(self.long_term, f, ensure_ascii=False, indent=2)
 
     def get_memory_context(self) -> dict:
-        """
+        """ 
         返回综合记忆上下文
         格式：
         {
