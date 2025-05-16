@@ -11,10 +11,10 @@ class Agent:
         self.LLMHandler = LLMHandler()
         self.SecurityChecker = SecurityChecker()
 
-    def get_env_context(self) -> dict:
-        current_cwd = os.getcwd()
+    def get_env_context(self, cwd: str) -> dict:
+        # cwd = os.getcwd()
         try:
-            dir_contents = os.listdir(current_cwd)
+            dir_contents = os.listdir(cwd)
         except PermissionError:
             dir_contents = ["<permission denied>"]
         safe_env_vars = {
@@ -22,10 +22,10 @@ class Agent:
             "HOME": os.environ.get("HOME", ""),
             "USER": os.environ.get("USER", ""),
             "LANG": os.environ.get("LANG", "en_US.UTF-8"),
-            "SHELL": os.environ.get("SHELL", "/bin/bash")
+            "SHELL": os.environ.get("SHELL", "powershell")
         }
         return {
-            "cwd": current_cwd,
+            "cwd": cwd,
             "dir_contents": sorted(dir_contents),  # 有序列表更友好
             "env_vars": safe_env_vars,
             "system_info": {
@@ -73,8 +73,8 @@ class Agent:
                 return "none"
 
     
-    def gen_suggestion(self, user_comment = "", user_response = []) -> dict:
-        context = self.get_env_context()
+    def gen_suggestion(self, cwd, user_comment = "", user_response = []) -> dict:
+        context = self.get_env_context(cwd)
         memory = self.MemoryManager.get_memory_context()
         response = self.LLMHandler.gen_response(context, memory, user_comment, user_response)
         (response_type, tmp) = self.LLMHandler.response_parser(response)

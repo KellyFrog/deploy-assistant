@@ -4,6 +4,7 @@
 这里的很多功能还很不完善
 """
 
+import msvcrt
 import subprocess
 import threading
 import queue
@@ -27,7 +28,7 @@ class TerminalSimulator:
 
     def __init__(self, cmd, func):
         # Create a new pseudo-terminal
-        self.pty = winpty.PtyProcess.spawn(cmd)
+        self.pty = winpty.PtyProcess.spawn(cmd, dimensions=(1000, 80))
         self.func = func
         # Start a thread to read the output
         output_thread = threading.Thread(target=self.read_output, args=(), daemon=True)
@@ -42,13 +43,12 @@ class TerminalSimulator:
 if __name__ == "__main__":
     terminal = TerminalSimulator("pwsh -NoExit -Command \"chcp 65001\"", empty_func)
     while terminal.isalive():
-        cmd = input().strip()
-        terminal.write(cmd + '\r')
-    # cmd = ""
-    # while terminal.isalive():
-    #     output, currrent = terminal.execute(cmd)
-    #     # for line, is_error in output:
-    #     #     print(f"{'[stderr]' if is_error else '[stdout]'} {line.strip()}")
-    #     # print(currrent[:-1], end = '')
-    #     cmd = input()
-    terminal.close()
+        try:
+            # if msvcrt.kbhit():
+            #     ch = msvcrt.getch().decode()
+            #     terminal.write(ch)
+            cmd = input().strip()
+            terminal.write(cmd + '\r')
+        except KeyboardInterrupt:
+            terminal.write('\003')
+            

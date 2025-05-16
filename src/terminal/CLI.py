@@ -6,6 +6,7 @@ TODO:
 - 可能可以在这里控制 Ctrl+C 之类的输入
 """
 
+from time import sleep
 import re
 import os
 from terminal.terminal_simulator import TerminalSimulator
@@ -19,15 +20,31 @@ class CLI:
 		self.last_command = ''
 		self.last_result = ''
 		self.LLMClient = LLMClient()
+		self.cwd = ''
 
 	def clean_ansi(self, text):
 		regex = r'\x1B\[[0-9;?]*[A-Za-z]'
 		return re.sub(regex, '', text)
 	
+	def _detect_powershell_prompt(self, s):
+		# 匹配可能包含环境名的PowerShell提示符，并捕获路径
+		pattern = r'(?:\(.*?\)\s+)?PS\s+([^>]+?)\s*>'
+		match = re.search(pattern, s)
+		if match:
+			# 提取路径并去除前后空格
+			path = match.group(1).strip()
+			# print(f"[powershell path found = {path}]")
+			return True, path
+		else:
+			return False, None
+	
 	def _stdout_listener(self, line: str):
 		line = self.clean_ansi(line.strip())
 		if(line == 'chcp 65001'):
 			return
+		match, cwd = self._detect_powershell_prompt(line)
+		if match:
+			self.cwd = cwd
 		self.last_result += line
 
 	def _write(self, cmd : str):
@@ -44,7 +61,8 @@ class CLI:
 		self.last_result = ''
 		cmd = cmd.strip()
 		if(cmd.startswith("??")):
-			cmd = self.Agent.gen_suggestion(user_comment = cmd[2:]);
+			print(f"starting at {self.cwd}")
+			cmd = self.Agent.gen_suggestion(cwd=self.cwd, user_comment=cmd[2:])
 			if(cmd == 'none'):
 				return
 		self._write(cmd)
