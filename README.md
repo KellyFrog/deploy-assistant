@@ -68,15 +68,15 @@
 
 ---
 
-函数意义：
+重要函数意义：
 
 - LLM
   - LLM_handler.LLMHandler
     - print_response_stream：用流输出的方式输出 response，并返回该 response.
-    - gen_response：给定 context, memory, user\_comment，向 llm 发送 prompt，并打印并返回回答. 回答有两种情况，一种是需要用户进一步回答问题，另一种是直接给出command.
+    - gen_response：给定 context, memory, user\_comment, user_answer，向 llm 发送 prompt，并打印并返回回答. 回答有两种情况，一种是需要用户进一步回答问题，另一种是直接给出command.
     - response_parser：对 response 进行解析. 最终结果应该是一个 `("command",[(command, explanation, warning/comment)])`，或者一个 `("ask",quesion)`.
 - agent
   - agent.Agent
-    - gen_env_context：生成环境信息. 应该别的地方用不到.
     - gen_suggestion：传入用户的额外评论，以及面对之前可能问的问题的一些回答的 list. 可能会向用户问问题或者执行命令. 如果用户输入 "Q" 那么退出这次的 suggestion 并返回 "none". 否则返回 command.
     - record_command(command, result, error="")：CLI 每执行一条命令就调用一次 record_command，agent 会将其发送至 memory management.
+
