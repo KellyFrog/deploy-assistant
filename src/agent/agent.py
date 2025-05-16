@@ -90,8 +90,8 @@ class Agent:
         
 
     def record_command(self, command, output):
-        print('>>>>>> current command = '+command)
-        print('>>>>>> result = '+output)
-        self.MemoryManager.update_command_history(command,{'output':output, 'status':'success'})
+        #print('>>>>>> current command = '+command)
+        #print('>>>>>> result = '+output)
+        self.MemoryManager.update_command_history(command,output)
 
 

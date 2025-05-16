@@ -55,7 +55,7 @@ class MemoryManager:
             "long_term": self.long_term
         }
 
-    def update_command_history(self, cmd: str, result: dict):
+    def update_command_history(self, cmd: str, result: str):
         """
         实时更新命令历史（在每次命令执行后调用）
         """
@@ -69,6 +69,7 @@ class MemoryManager:
             # 每累积 SHORT_HISTORY 条新记录才更新一次中期记忆
         self.update_counter += 1
         if self.update_counter >= self.short_history:
+            print(self.short_term)
             self._update_medium_term_memory()
             self.update_counter = 0  # 重置计数器
 
@@ -79,25 +80,21 @@ class MemoryManager:
         print('存储中...')
 
         # 构建提示词
-        prompt = "请分析以下命令历史，总结用户想做什么和做了些什么（100字以内）：\n"
+        prompt = "请分析以下命令历史，总结用户想做什么和做了什么（200字以内）：\n"
+        prompt += f"以下命令发生之前：{self.medium_term}"
         for item in self.short_term:
-            # 只提取命令的实际输出，过滤掉提示符等无关信息
-            output = item['result'].get('output', '')
-            status = item['result'].get('status', 'success')
-            
             # 移除 PowerShell 提示符和空行
-            output_lines = [line for line in output.split('\n') 
+            output_lines = [line for line in item['result'].split('\n') 
                           if not line.strip().startswith('PS ') and line.strip()]
             clean_output = '\n'.join(output_lines)
             
-            # 根据状态格式化输出
-            if status == "error":
-                prompt += f"命令: {item['cmd']}\n状态: 执行失败\n错误信息: {clean_output}\n"
-            else:
-                prompt += f"命令: {item['cmd']}\n状态: 执行成功\n输出: {clean_output}\n"
+            prompt += f"命令: {item['cmd']}\n输出: {clean_output}\n"
 
         # 调用 LLM 生成总结
         response = self.llm_client.generate(prompt, stream=False)
+
+        print(response)
+
         self.medium_term = response
 
         print("存储成功了！")

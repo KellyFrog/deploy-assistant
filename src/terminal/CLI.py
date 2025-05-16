@@ -16,32 +16,32 @@ class CLI:
 	def __init__(self, start_command: str):
 		self.Agent = Agent()
 		self.terminal = TerminalSimulator(start_command, self._stdout_listener)
+		self.last_command = ''
+		self.last_result = ''
 		self.LLMClient = LLMClient()
 
 	def clean_ansi(self, text):
-	    regex = r'\x1B\[[0-9;?]*[A-Za-z]'
-	    return re.sub(regex, '', text)
+		regex = r'\x1B\[[0-9;?]*[A-Za-z]'
+		return re.sub(regex, '', text)
 	
 	def _stdout_listener(self, line: str):
 		line = self.clean_ansi(line.strip())
 		if(line == 'chcp 65001'):
 			return
-		split_regex = re.compile("\r\n")
-		parts = split_regex.split(line, maxsplit=1)
-		print(parts)
-		if len(parts) < 2:
-			return
-		command = parts[0].strip()
-		if(command == ''):
-			return
-		result = parts[1].strip()
-		self.Agent.record_command(command, result)
-		
+		self.last_result += line
 
 	def _write(self, cmd : str):
+		self.last_command = cmd
 		self.terminal.write(cmd + '\r')
 		
 	def parse_command(self, cmd: str):
+		if(self.last_command != ''):
+			split_regex = re.compile(r"\r\n")
+			parts = split_regex.split(self.last_result, maxsplit=1)
+			if(len(parts) == 2):
+				self.Agent.record_command(self.last_command, parts[1])
+			self.last_command = ''
+		self.last_result = ''
 		cmd = cmd.strip()
 		if(cmd.startswith("??")):
 			cmd = self.Agent.gen_suggestion(user_comment = cmd[2:]);
@@ -57,7 +57,7 @@ class CLI:
 	
 def CLI_test():
 	cli = CLI("powershell -NoExit -Command \"chcp 65001\"")
-	str = '\n'
+	str = '\r\n'
 	while cli.isalive():
 		try:
 			cli.parse_command(str)
