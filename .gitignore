@@ -4,3 +4,5 @@ tests/
 **/api_key.enc
 **.pyc
 **/__pycache__
+memory/long_term_memory.json
+memory/user_profiles.json

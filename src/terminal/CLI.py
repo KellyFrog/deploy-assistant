@@ -60,6 +60,16 @@ class CLI:
 			self.last_command = ''
 		self.last_result = ''
 		cmd = cmd.strip()
+		
+		# 处理退出命令
+		if cmd.lower() in ['exit', 'quit']:
+			# 生成并更新用户画像
+			env_profile, user_profile = self.Agent.MemoryManager.generate_user_profiles()
+			self.Agent.MemoryManager.update_long_term_memory(env_profile, user_profile)
+			# 发送退出命令
+			self._write(cmd)
+			return
+			
 		if(cmd.startswith("??")):
 			print(f"starting at {self.cwd}")
 			cmd = self.Agent.gen_suggestion(cwd=self.cwd, user_comment=cmd[2:])

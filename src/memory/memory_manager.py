@@ -15,6 +15,7 @@ class MemoryManager:
         self.llm_client = LLMClient(model = 'Qwen/Qwen2.5-7B-Instruct')
         self._load_long_term_memory()
         self.update_counter = 0  # 用于控制中期记忆更新频率
+        self.full_history = []  # 记录完整的命令历史
 
     def _load_long_term_memory(self):
         """从文件加载长期记忆"""
@@ -61,6 +62,8 @@ class MemoryManager:
         """
         # 更新短期记忆
         self.short_term.append({"cmd": cmd, "result": result})
+        # 更新完整历史
+        self.full_history.append({"cmd": cmd, "result": result})
         
         # 当短期记忆达到阈值时，移除最旧的记录
         if len(self.short_term) > self.short_history:
@@ -106,3 +109,31 @@ class MemoryManager:
         if user_profile:
             self.long_term["user_profile"] = user_profile
         self._save_long_term_memory()
+
+    def generate_user_profiles(self) -> tuple[str, str]:
+        """
+        根据完整命令历史生成用户画像，并考虑已有的长期记忆
+        返回: (环境简档, 用户习惯简档)
+        """
+        if not self.full_history:
+            return self.long_term["env_profile"], self.long_term["user_profile"]
+
+        # 构建环境简档提示词
+        env_prompt = "请根据以下命令历史和已有的环境简档，总结用户的系统环境特征（100字以内）：\n"
+        env_prompt += f"已有的环境简档：{self.long_term['env_profile']}\n\n"
+        env_prompt += "本次会话的命令历史：\n"
+        for item in self.full_history:
+            env_prompt += f"命令: {item['cmd']}\n输出: {item['result']}\n"
+
+        # 构建用户习惯简档提示词
+        user_prompt = "请根据以下命令历史和已有的用户习惯简档，总结用户的使用习惯和偏好（100字以内）：\n"
+        user_prompt += f"已有的用户习惯简档：{self.long_term['user_profile']}\n\n"
+        user_prompt += "本次会话的命令历史：\n"
+        for item in self.full_history:
+            user_prompt += f"命令: {item['cmd']}\n输出: {item['result']}\n"
+
+        # 生成两个简档
+        env_profile = self.llm_client.generate(env_prompt, stream=False)
+        user_profile = self.llm_client.generate(user_prompt, stream=False)
+
+        return env_profile, user_profile
