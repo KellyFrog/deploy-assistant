@@ -60,7 +60,7 @@ class CLI:
 			self.last_command = ''
 		self.last_result = ''
 		cmd = cmd.strip()
-		
+
 		# 处理退出命令
 		if cmd.lower() in ['exit', 'quit']:
 			# 生成并更新用户画像

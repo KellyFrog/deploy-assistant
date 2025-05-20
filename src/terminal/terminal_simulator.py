@@ -5,6 +5,7 @@
 """
 
 import msvcrt
+import re
 import subprocess
 import threading
 import queue
@@ -19,8 +20,12 @@ class TerminalSimulator:
         while True:
             try:
                 output = self.pty.read()
+                # pattern = r'\x1b\[m'  # 删除上移光标的转义字符
+                pattern = r'\x1B\[(\d+;\d+|\d+)H' # 删除形如 \x1b[4;36H 的转义符，它的作用是移动光标
+                output = re.sub(pattern, '', output)
                 self.func(output)
                 if output:
+                    # print(repr(output))
                     print(output, end='', flush=True)
                     pass
             except EOFError:
