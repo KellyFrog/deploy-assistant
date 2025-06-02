@@ -90,6 +90,7 @@ class LLMHandler:
 			"选项不用太多，要求内容精简直接，数量最多五个。" + \
 			"每一个选项的格式是三元组：该选项对应的可供执行的cmd命令（一定是能在终端执行的命令！）ಠ该选项的说明ಠ该选项的注意事项ಠ。" + \
 			"并且三元组都要给出内容，且以ಠ分隔，注意每一项后面都要加ಠ。" + \
+			"不要添加'命令：'、'说明：'、'注意：'等前缀，直接提供内容。" + \
 			"所有选项构成列表，每个选项后换行。" + \
 			"请以我给你的格式，提供回复。回复中所有的标点符号均为英文符号！"
 		
@@ -99,7 +100,7 @@ class LLMHandler:
 		)
 		return result	
 
-	def response_parser(self, response):
+	def response_parser(self, response):	
 		idx = 0
 		response_type = -1
 		for idx in range (len (response)):

@@ -1,16 +1,34 @@
 import os
+import re
 import platform
 from typing import Dict, List
 from memory.memory_manager import MemoryManager
 from LLM.LLM_handler import LLMHandler
 from security.validator import SecurityChecker
+from deploy.deploy_engine import DeployEngine
+from terminal.terminal_simulator import TerminalSimulator
 
 class Agent:
     def __init__(self):
         self.MemoryManager = MemoryManager()
         self.LLMHandler = LLMHandler()
         self.SecurityChecker = SecurityChecker()
+        self.deploy_engine = DeployEngine(self)
+        self.terminal_simulator = TerminalSimulator("powershell -NoExit -Command \"chcp 65001\"", self._stdout_listener)
+        self.last_command_output = ""
+        self.current_working_directory = os.getcwd()
 
+    def _stdout_listener(self, output):
+        self.last_command_output = output
+    
+    def get_current_working_directory(self) -> str:
+        """获取当前工作目录"""
+        return self.current_working_directory
+    
+    def handle_deployment(self, request: str) -> Dict:
+        """处理部署请求的统一入口"""
+        return self.deploy_engine.handle_request(request)
+    
     def get_env_context(self, cwd: str) -> dict:
         # cwd = os.getcwd()
         try:
@@ -40,7 +58,12 @@ class Agent:
         m = len(tmp)
         #print(tmp)
         for i in range(m):
-            (cmd, exp, note) = tmp[i]
+            #(cmd, exp, note) = tmp[i]
+
+            cmd = re.sub(r'^\d*`|`', '', str(tmp[i][0])) if len(tmp[i]) > 0 else "无命令"
+            exp = re.sub(r'^\d*`|`', '', str(tmp[i][1])) if len(tmp[i]) > 1 and tmp[i][1] else "暂无说明"
+            note = re.sub(r'^\d*`|`', '', str(tmp[i][2])) if len(tmp[i]) > 2 and tmp[i][2] else "无特别注意事项"
+
             output = [
                 f"【选项 {i}】",
                 f"▶ 命令：{cmd}",

@@ -75,6 +75,20 @@ class CLI:
 			cmd = self.Agent.gen_suggestion(cwd=self.cwd, user_comment=cmd[2:])
 			if(cmd == 'none'):
 				return
+			
+		if cmd.startswith("deploy "):
+			request = cmd[7:].strip()
+			result = self.Agent.handle_deployment(request)
+        
+			if "type" in result and result["type"] == "plan":
+				print("\n部署计划:")
+				for i, step in enumerate(result["plan"], 1):
+					print(f"{i}. {step}")
+        
+			else:
+				print(f"\n部署失败: {result.get('message', '未知错误')}")
+			return
+    
 		self._write(cmd)
 	
 	def keyBoardInterrupt(self):
