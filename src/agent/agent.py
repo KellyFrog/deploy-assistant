@@ -25,9 +25,11 @@ class Agent:
         """获取当前工作目录"""
         return self.current_working_directory
     
-    def handle_deployment(self, request: str) -> Dict:
+    def handle_deployment(self, cwd, request: str) -> Dict:
         """处理部署请求的统一入口"""
-        return self.deploy_engine.handle_request(request)
+        context = self.get_env_context(cwd)
+        memory = self.MemoryManager.get_memory_context()
+        return self.deploy_engine.handle_request(context, memory, request)
     
     def get_env_context(self, cwd: str) -> dict:
         # cwd = os.getcwd()
