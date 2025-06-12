@@ -21,10 +21,11 @@ class Agent:
     
     def handle_deployment(self, request: str, cwd: str) -> Dict:
         """处理部署请求的统一入口"""
-        return self.deploy_engine.handle_request(request, cwd)
+        context = self.get_env_context(cwd)
+        memory = self.MemoryManager.get_memory_context()
+        return self.deploy_engine.handle_request(context, memory, request, cwd)
     
     def get_env_context(self, cwd: str) -> dict:
-        # cwd = os.getcwd()
         try:
             dir_contents = os.listdir(cwd)
         except PermissionError:

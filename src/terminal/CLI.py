@@ -69,7 +69,7 @@ class CLI:
 			# 发送退出命令
 			self._write(cmd)
 			return
-			
+
 		if(cmd.startswith("??")):
 			print(f"starting at {self.cwd}")
 			cmd = self.Agent.gen_suggestion(cwd=self.cwd, user_comment=cmd[2:])
@@ -78,7 +78,7 @@ class CLI:
 			
 		if cmd.startswith("deploy "):
 			request = cmd[7:].strip()
-			result = self.Agent.handle_deployment(request, self.cwd)
+			result = self.Agent.handle_deployment(cwd=self.cwd, request=request)
         
 			if "type" in result and result["type"] == "plan":
 				print("\n部署计划:")

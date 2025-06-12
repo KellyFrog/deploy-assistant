@@ -8,11 +8,11 @@ class DeployEngine:
         self.github_deployer = GitHubDeployer(agent)
         self.current_plan = []
     
-    def handle_request(self, request: str, cwd: str) -> Dict:
+    def handle_request(self, context: str, memory: str, request: str, cwd: str) -> Dict:
         """处理部署请求的统一入口"""
         # 检测是否为GitHub URL
         if self._is_github_url(request):
-            return self.github_deployer.deploy_from_github(request)
+            return self.github_deployer.deploy_from_github(context, memory, request)
         # 普通部署请求
         print(f"正在生成部署计划: {request}")
         self.current_plan = self.generate_plan(request, cwd)
