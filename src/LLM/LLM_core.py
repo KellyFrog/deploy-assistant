@@ -39,7 +39,7 @@ class SecureAPIKeyManager:
 
 class LLMClient:
     """大语言模型交互类"""
-    def __init__(self, url: str = 'https://api.siliconflow.cn/v1/', model: str = 'deepseek-ai/DeepSeek-R1'):
+    def __init__(self, url: str = 'https://api.siliconflow.cn/v1/', model: str = 'deepseek-ai/DeepSeek-V3'):
         self.url = url
         self.model = model
         self.key_manager = SecureAPIKeyManager()

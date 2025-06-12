@@ -14,20 +14,14 @@ class Agent:
         self.LLMHandler = LLMHandler()
         self.SecurityChecker = SecurityChecker()
         self.deploy_engine = DeployEngine(self)
-        self.terminal_simulator = TerminalSimulator("powershell -NoExit -Command \"chcp 65001\"", self._stdout_listener)
         self.last_command_output = ""
-        self.current_working_directory = os.getcwd()
 
     def _stdout_listener(self, output):
         self.last_command_output = output
     
-    def get_current_working_directory(self) -> str:
-        """获取当前工作目录"""
-        return self.current_working_directory
-    
-    def handle_deployment(self, request: str) -> Dict:
+    def handle_deployment(self, request: str, cwd: str) -> Dict:
         """处理部署请求的统一入口"""
-        return self.deploy_engine.handle_request(request)
+        return self.deploy_engine.handle_request(request, cwd)
     
     def get_env_context(self, cwd: str) -> dict:
         # cwd = os.getcwd()
@@ -107,7 +101,7 @@ class Agent:
             if(str == "Q"):
                 return "none"
             else:
-                return self.gen_suggestion(user_comment, user_response + [(tmp, str)])
+                return self.gen_suggestion(user_comment, cwd, user_response + [(tmp, str)])
         else:
             return self.security_protection(self.get_user_choice(tmp))
         

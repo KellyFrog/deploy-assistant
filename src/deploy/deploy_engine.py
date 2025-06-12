@@ -1,4 +1,3 @@
-import os
 import re
 from typing import List, Dict, Tuple
 from .github_deploy import GitHubDeployer
@@ -9,20 +8,20 @@ class DeployEngine:
         self.github_deployer = GitHubDeployer(agent)
         self.current_plan = []
     
-    def handle_request(self, request: str) -> Dict:
+    def handle_request(self, request: str, cwd: str) -> Dict:
         """处理部署请求的统一入口"""
         # 检测是否为GitHub URL
         if self._is_github_url(request):
             return self.github_deployer.deploy_from_github(request)
         # 普通部署请求
         print(f"正在生成部署计划: {request}")
-        self.current_plan = self.generate_plan(request)
+        self.current_plan = self.generate_plan(request, cwd)
         return {
             "type": "plan",
             "plan": self.current_plan,
         }
     
-    def generate_plan(self, user_request: str) -> List[str]:
+    def generate_plan(self, user_request: str, cwd: str) -> List[str]:
         """生成部署计划"""
         prompt = f"""
 为以下任务生成简洁的安装步骤：
@@ -43,7 +42,7 @@ class DeployEngine:
         }
 
         response = self.agent.LLMHandler.gen_response(  
-            context=self.agent.get_env_context(os.getcwd()),
+            context=self.agent.get_env_context(cwd),
             memory=memory,
             user_comment=prompt,
             user_response=[]

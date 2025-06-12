@@ -78,7 +78,7 @@ class CLI:
 			
 		if cmd.startswith("deploy "):
 			request = cmd[7:].strip()
-			result = self.Agent.handle_deployment(request)
+			result = self.Agent.handle_deployment(request, self.cwd)
         
 			if "type" in result and result["type"] == "plan":
 				print("\n部署计划:")
