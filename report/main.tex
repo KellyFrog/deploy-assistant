@@ -90,123 +90,53 @@
 
 % 项目内容
 \section{主题}
-项目内容
 
-%分段
-\begin{itemize}
-\item 内容1
-\item 内容2
-\item 内容3
-\end{itemize}
+、项目要求
+1. 基础功能层（必须完成）
+–  集成至少1个大语言模型API（如GPT-3.5/4、qwen、deepseek等），展示不同参数（如temperature=0.7 vs 1.2）对输出的影响对比
+–  实现核心功能闭环，需定义明确的输入输出规范（如JSON Schema）并实现校验机制
+–  包含基础交互界面（命令行/CUI/GUI任选）
+–  处理一些真实场景测试数据作为展示
+–  包含下方“技术实现规范”中的要点。
+2. 进阶功能层（选择性完成）
+–  实现多模态扩展（图像/语音输入输出）
+–  实现高质量结构化输出控制，能95%的概率生成符合要求的格式
+–  构建领域知识库增强，如RAG架构需说明embedding模型选型（如text2vec）和检索策略（如FAISS索引）
+–  开发记忆机制（对话历史/用户画像）
+–  集成外部工具（包括但不限于计算器、数据库、API、Python代码解释器）
+–  实现一个自主“Agent”，需实现至少3种工具调用决策逻辑
+–  其他可能的额外功能
+3. 创新维度（选择性完成）
+–  解决未被主流产品覆盖的需求痛点
+–  提出新颖的prompt engineering方案
+–  设计独特的输出呈现形式
+–  其他可能的创新形式
+   注：以上括号内的，均是举例，而非必须和仅仅。比如集成的外部工具可以从括号中选几个，也可以自己再额外设计。
 
-
-\subsection{算法}
-表达算法的格式，一下是示例
-\cref{alg:example} 
-\begin{algorithm}[htb]
-   \caption{Bubble Sort}
-   \label{alg:example}
-\begin{algorithmic}
-   \STATE {\bfseries Input:} data $x_i$, size $m$
-   \REPEAT
-   \STATE Initialize $noChange = true$.
-   \FOR{$i=1$ {\bfseries to} $m-1$}
-   \IF{$x_i > x_{i+1}$}
-   \STATE Swap $x_i$ and $x_{i+1}$
-   \STATE $noChange = false$
-   \ENDIF
-   \ENDFOR
-   \UNTIL{$noChange$ is $true$}
-\end{algorithmic}
-\end{algorithm}
-
-% 用tables来呈现数据
-\subsection{Tables}
-tables 示例
-\begin{table}[t]
-\caption{Classification accuracies for naive Bayes and flexible
-Bayes on various data sets.}
-\label{sample-table}
-\vskip 0.15in
-\begin{center}
-\begin{small}
-\begin{sc}
-\begin{tabular}{lcccr}
-\toprule
-Data set & Naive & Flexible & Better? \\
-\midrule
-Breast    & 95.9$\pm$ 0.2& 96.7$\pm$ 0.2& $\surd$ \\
-Cleveland & 83.3$\pm$ 0.6& 80.0$\pm$ 0.6& $\times$\\
-Glass2    & 61.9$\pm$ 1.4& 83.8$\pm$ 0.7& $\surd$ \\
-Credit    & 74.8$\pm$ 0.5& 78.3$\pm$ 0.6&         \\
-Horse     & 73.3$\pm$ 0.9& 69.7$\pm$ 1.0& $\times$\\
-Meta      & 67.1$\pm$ 0.6& 76.5$\pm$ 0.5& $\surd$ \\
-Pima      & 75.1$\pm$ 0.6& 73.9$\pm$ 0.5&         \\
-Vehicle   & 44.9$\pm$ 0.6& 61.5$\pm$ 0.4& $\surd$ \\
-\bottomrule
-\end{tabular}
-\end{sc}
-\end{small}
-\end{center}
-\vskip -0.1in
-\end{table}
+、技术实现规范
+1. 模型调用
+–  必须展示API调用参数调优过程（temperature/top_p等）
+–  需处理流式响应，实现逐字/分块输出效果（如ChatGPT式打字机效果），禁用单次完整响应
+–  实现输入预处理（敏感词过滤/指令注入防护）
+2. 系统架构
+–  需提供架构设计图（数据流图/模块关系图）
+–  要求模块化开发（至少3个独立功能模块）
+–  必须包含异常处理机制（API失败重试、结构化输出失败等）
 
 
-\subsection{表示定义的格式}
-
-示例：definition
-\begin{definition}
-\label{def:inj}
-A function $f:X \to Y$ is injective if for any $x,y\in X$ different, $f(x)\ne f(y)$.
-\end{definition}
-
-示例：proposition
-Using \cref{def:inj} we immediate get the following result:
-\begin{proposition}
-If $f$ is injective mapping a set $X$ to another set $Y$, 
-the cardinality of $Y$ is at least as large as that of $X$
-\end{proposition}
-
-示例：proof
-\begin{proof} 
-Left as an exercise to the reader. 
-\end{proof}
-
-示例：lemma
-\begin{lemma}
-\label{lem:usefullemma}
-For any $f:X \to Y$ and $g:Y\to Z$ injective functions, $f \circ g$ is injective.
-\end{lemma}
-
-示例：theorem
-\begin{theorem}
-\label{thm:bigtheorem}
-If $f:X\to Y$ is bijective, the cardinality of $X$ and $Y$ are the same.
-\end{theorem}
-
-示例：corollary
-\begin{corollary}
-If $f:X\to Y$ is bijective, 
-the cardinality of $X$ is at least as large as that of $Y$.
-\end{corollary}
-
-示例：assumption
-\begin{assumption}
-The set $X$ is finite.
-\label{ass:xfinite}
-\end{assumption}
-
-示例：remark
-\begin{remark}
-According to some, it is only the finite case (cf. \cref{ass:xfinite}) that is interesting.
-\end{remark}
-%restatable
+\subsection{需求分析}
 
 
-\subsection{参考文献}
+\subsection{技术选型}
 
-%示例
-需要先去example\_paper.bib文件把自己的文献以正确的格式填入，然后内容里直接\cite{langley00}就行了。
+
+\subsection{实现细节}
+
+
+\subsection{评估对比}
+
+
+\subsection{反思}
 
 
 \bibliography{example_paper}
