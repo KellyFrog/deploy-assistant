@@ -91,6 +91,7 @@ class LLMClient:
 
     def _handle_stream_response(self, response, write_console) -> str:
         """处理流式响应"""
+        print('---llm stream---')
         writer = StreamLineWriter()
         result = []
         for chunk in response:
@@ -103,9 +104,10 @@ class LLMClient:
                 str = chunk.choices[0].delta.reasoning_content
                 if write_console:
                     writer.append(str)
-        if write_console:
-            writer.end_line()
+        #if write_console:
+            #writer.end_line()
         print(''.join(result))
+        print('--llm stream---')
         return ''.join(result)
 
     def _handle_full_response(self, response) -> str:
