@@ -91,7 +91,7 @@ class LLMClient:
 
     def _handle_stream_response(self, response, write_console) -> str:
         """处理流式响应"""
-        writer = StreamLineWriter(scroll_width=80)
+        writer = StreamLineWriter()
         result = []
         for chunk in response:
             if chunk.choices[0].delta.content:

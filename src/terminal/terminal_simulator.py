@@ -25,15 +25,14 @@ class TerminalSimulator:
                 output = re.sub(pattern, '', output)
                 self.func(output)
                 if output:
-                    # print(repr(output))
                     print(output, end='', flush=True)
                     pass
             except EOFError:
                 break
 
-    def __init__(self, cmd, func):
+    def __init__(self, cmd, dimensions, func):
         # Create a new pseudo-terminal
-        self.pty = winpty.PtyProcess.spawn(cmd, dimensions=(1000, 80))
+        self.pty = winpty.PtyProcess.spawn(cmd, dimensions=dimensions)
         self.func = func
         # Start a thread to read the output
         output_thread = threading.Thread(target=self.read_output, args=(), daemon=True)

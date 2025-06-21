@@ -5,21 +5,24 @@ from collections import deque
 import re
 
 class StreamLineWriter:
-    def __init__(self, header="", scroll_width=10, auto_clear=True):
+    def __init__(self, header="", scroll_width=None, auto_clear=True):
         """
         :param header: 固定显示的头部字符串
         :param scroll_width: 滚动窗口的字符宽度（保留多少尾部字符）
         :param auto_clear: 是否自动清除末尾空格
         """
         self.header = header
-        self.scroll_width = scroll_width
         self.auto_clear = auto_clear
         self.buffer = deque(maxlen=200)  # 滚动缓冲区
         self.truncated = False  # 是否已截断过内容
         
         # 计算实际可用宽度（考虑头部）
         self.term_width = self.get_term_width()
-        self.avail_width = max(5, self.term_width - len(header.encode('utf-8')) - 3)
+        self.avail_width = max(5, int(self.term_width - len(header.encode('utf-8')) - 3))
+        if scroll_width == None:
+            self.scroll_width = self.avail_width // 2
+        else:
+            self.scroll_width = scroll_width
     
     def get_term_width(self):
         """获取当前终端宽度"""

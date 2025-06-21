@@ -14,13 +14,14 @@ from LLM.LLM_core import LLMClient
 from agent.agent import Agent
 
 class CLI:
-	def __init__(self, start_command: str):
+	def __init__(self, start_command: str, dimensions = (24, 80)):
 		self.Agent = Agent()
-		self.terminal = TerminalSimulator(start_command, self._stdout_listener)
+		self.terminal = TerminalSimulator(start_command, dimensions, self._stdout_listener)
 		self.last_command = ''
 		self.last_result = ''
 		self.LLMClient = LLMClient()
 		self.cwd = ''
+		self.dimensions = dimensions
 
 	def clean_ansi(self, text):
 		regex = r'\x1B\[[0-9;?]*[A-Za-z]'
@@ -33,7 +34,6 @@ class CLI:
 		if match:
 			# 提取路径并去除前后空格
 			path = match.group(1).strip()
-			# print(f"[powershell path found = {path}]")
 			return True, path
 		else:
 			return False, None
@@ -65,7 +65,7 @@ class CLI:
 		if cmd.lower() in ['exit', 'quit']:
 			# 发送退出命令
 			self._write(cmd)
-			print("更新用户画像...")
+			print("保存用户画像...")
 			try:
 				# 生成并更新用户画像
 				env_profile, user_profile = self.Agent.MemoryManager.generate_user_profiles()
@@ -106,12 +106,12 @@ class CLI:
 	def isalive(self):
 		return self.terminal.isalive()
 	
-def CLI_test():
-	cli = CLI("powershell -NoExit -Command \"chcp 65001\"")
-	str = '\r\n'
-	while cli.isalive():
-		try:
-			cli.parse_command(str)
-			str = input()
-		except KeyboardInterrupt:
-			cli.keyBoardInterrupt()
+	def launch(self):
+		str = '\r\n'
+		while self.isalive():
+			try:
+				self.parse_command(str)
+				str = input()
+			except KeyboardInterrupt:
+				self.keyBoardInterrupt()
+	

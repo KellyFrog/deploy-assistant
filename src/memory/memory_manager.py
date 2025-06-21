@@ -72,7 +72,6 @@ class MemoryManager:
             # 每累积 SHORT_HISTORY 条新记录才更新一次中期记忆
         self.update_counter += 1
         if self.update_counter >= self.short_history:
-            print(self.short_term)
             self._update_medium_term_memory()
             self.update_counter = 0  # 重置计数器
 
@@ -80,7 +79,7 @@ class MemoryManager:
         """更新中期记忆"""
         if not self.short_term:
             return
-        print('存储中...')
+        print('更新记忆...')
 
         # 构建提示词
         prompt = "请分析以下命令历史，总结用户想做什么和做了什么（200字以内）：\n"
@@ -93,14 +92,15 @@ class MemoryManager:
             
             prompt += f"命令: {item['cmd']}\n输出: {clean_output}\n"
 
-        # 调用 LLM 生成总结
-        response = self.llm_client.generate(prompt, stream=False)
+        try:
+            # 调用 LLM 生成总结
+            response = self.llm_client.generate(prompt, stream=True, write_console=True)
 
-        print(response)
+            self.medium_term = response
 
-        self.medium_term = response
-
-        print("存储成功了！")
+            print("存储成功了！")
+        except KeyboardInterrupt:
+            print("Interrupted")
 
     def update_long_term_memory(self, env_profile: str = None, user_profile: str = None):
         """更新长期记忆"""
