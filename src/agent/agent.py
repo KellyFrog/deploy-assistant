@@ -113,7 +113,7 @@ class Agent:
             if(str == "Q"):
                 return "none"
             else:
-                return self.gen_suggestion(user_comment, cwd, user_response + [(tmp, str)])
+                return self.gen_suggestion(cwd, user_comment, user_response + [(tmp, str)])
         else:
             return self.security_protection(self.get_user_choice(tmp))
         
