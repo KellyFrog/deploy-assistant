@@ -4,6 +4,7 @@ from cryptography.fernet import Fernet
 from openai import OpenAI
 from typing import Generator, Optional
 from config.settings import Settings
+from LLM.stream_write import StreamLineWriter
 
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
@@ -39,7 +40,7 @@ class SecureAPIKeyManager:
 
 class LLMClient:
     """大语言模型交互类"""
-    def __init__(self, url: str = 'https://api.siliconflow.cn/v1/', model: str = 'deepseek-ai/DeepSeek-V3'):
+    def __init__(self, url: str = 'https://api.siliconflow.cn/v1/', model: str = 'deepseek-ai/DeepSeek-R1'):
         self.url = url
         self.model = model
         self.key_manager = SecureAPIKeyManager()
@@ -64,12 +65,14 @@ class LLMClient:
         self,
         prompt: str,
         stream: bool = False,
-    ) -> Generator[str, None, None] | str:
+        write_console: bool = True,
+    ) -> str:
         """
-        生成文本响应
+        生成文本响应，
         :param prompt: 输入的提示文本
         :param stream: 是否使用流式响应
-        :return: 生成器（流式模式）或字符串（非流式模式）
+        :param write_console: 是否将流式输出到终端
+        :return: 返回内容
         """
         try:
             response = self.client.chat.completions.create(
@@ -80,19 +83,30 @@ class LLMClient:
             )
 
             if stream:
-                return self._handle_stream_response(response)
+                return self._handle_stream_response(response, write_console)
             return self._handle_full_response(response)
 
         except Exception as e:
             raise RuntimeError(f"API调用失败: {str(e)}") from e
 
-    def _handle_stream_response(self, response) -> Generator[str, None, None]:
+    def _handle_stream_response(self, response, write_console) -> str:
         """处理流式响应"""
+        writer = StreamLineWriter(scroll_width=80)
+        result = []
         for chunk in response:
             if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
+                str = chunk.choices[0].delta.content
+                if write_console:
+                    writer.append(str)
+                result.append(str)
             if chunk.choices[0].delta.reasoning_content:
-                yield chunk.choices[0].delta.reasoning_content
+                str = chunk.choices[0].delta.reasoning_content
+                if write_console:
+                    writer.append(str)
+        if write_console:
+            writer.end_line()
+        print(''.join(result))
+        return ''.join(result)
 
     def _handle_full_response(self, response) -> str:
         """处理完整响应"""
@@ -100,14 +114,14 @@ class LLMClient:
 
     """"""
 
-if __name__ == "__main__":
+def test_llm():
     # 示例使用
     llm = LLMClient()
     
     # 流式响应演示
     print("流式响应演示：")
     response_stream = llm.generate(
-        "用100字解释量子计算的基本原理", 
+        "Python中如何实现数据加密？",
         stream=True,
     )
     
@@ -123,3 +137,7 @@ if __name__ == "__main__":
     print("\n非流式响应演示：")
     standard_response = llm.generate("Python中如何实现数据加密？")
     print(standard_response)
+    
+
+if __name__ == "__main__":
+    test_llm()

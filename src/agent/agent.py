@@ -94,8 +94,19 @@ class Agent:
     def gen_suggestion(self, cwd, user_comment = "", user_response = []) -> dict:
         context = self.get_env_context(cwd)
         memory = self.MemoryManager.get_memory_context()
-        response = self.LLMHandler.gen_response(context, memory, user_comment, user_response)
-        (response_type, tmp) = self.LLMHandler.response_parser(response)
+        while True:
+            try:
+                response = self.LLMHandler.gen_response(context, memory, user_comment, user_response)
+                (response_type, tmp) = self.LLMHandler.response_parser(response)
+            except RuntimeError as e:
+                print(f"RuntimeError: {e.args[0]}，重试？[Y/N]")
+                if input().lower() == 'y':
+                    continue
+                else:
+                    return 'none'
+            break
+            
+                
         if response_type == "ask":
             print("为了更好帮助您，可能需要您回答一下这个问题喵："+tmp)
             str = input()

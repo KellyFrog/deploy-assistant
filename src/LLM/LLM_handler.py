@@ -1,5 +1,6 @@
 from config.settings import Settings
 from LLM.LLM_core import LLMClient
+from LLM.stream_write import StreamLineWriter
 
 def next_item (achar):
 	return achar == 'ಠ'
@@ -96,9 +97,10 @@ class LLMHandler:
 		
 		result = self.LLMClient.generate (
 			prompt = prompt,
-			stream = False
+			stream = True,
+			write_console = True
 		)
-		return result	
+		return result
 
 	def response_parser(self, response):	
 		idx = 0
