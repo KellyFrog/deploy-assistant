@@ -1,16 +1,5 @@
-"""
-这个文件的目标是扩展终端的功能，实现一个 CLI，这里应该是整个程序的中心和入口，负责处理输入和调用各种工具。
-在获取 stdin 之后在将命令通过 TerminalSimulator 写给终端的 stdin 之前截胡一下处理扩展的命令和组合键。
-TODO:
-- 设计合理的快捷调用（如使用 /? 之类的快捷命令）
-- 可能可以在这里控制 Ctrl+C 之类的输入
-"""
-
-from time import sleep
 import re
-import os
 from terminal.terminal_simulator import TerminalSimulator
-from LLM.LLM_core import LLMClient
 from agent.agent import Agent
 
 class CLI:
@@ -19,7 +8,6 @@ class CLI:
 		self.terminal = TerminalSimulator(start_command, dimensions, self._stdout_listener)
 		self.last_command = ''
 		self.last_result = ''
-		self.LLMClient = LLMClient()
 		self.cwd = ''
 		self.dimensions = dimensions
 

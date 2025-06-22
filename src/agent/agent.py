@@ -6,7 +6,6 @@ from memory.memory_manager import MemoryManager
 from LLM.LLM_handler import LLMHandler
 from security.validator import SecurityChecker
 from deploy.deploy_engine import DeployEngine
-from terminal.terminal_simulator import TerminalSimulator
 
 class Agent:
     def __init__(self):

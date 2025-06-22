@@ -1,6 +1,7 @@
 import re
 from typing import List, Dict, Tuple
 from .github_deploy import GitHubDeployer
+import ast
 
 class DeployEngine:
     def __init__(self, agent):
@@ -49,21 +50,20 @@ class DeployEngine:
         )
         
         # 解析响应
-        try:
-            import ast
-            plan = ast.literal_eval(response)
-            if isinstance(plan, list) and all(isinstance(step, str) for step in plan):
+        # try:
+        plan = ast.literal_eval(response)
+        if isinstance(plan, list) and all(isinstance(step, str) for step in plan):
+            return plan
+    
+        # 如果整个响应不是列表，尝试提取列表部分
+        matches = re.findall(r'\[.*?\]', response)
+        if matches:
+            longest_match = max(matches, key=len)
+            plan = ast.literal_eval(longest_match)
+            if isinstance(plan, list):
                 return plan
-        
-            # 如果整个响应不是列表，尝试提取列表部分
-            matches = re.findall(r'\[.*?\]', response)
-            if matches:
-                longest_match = max(matches, key=len)
-                plan = ast.literal_eval(longest_match)
-                if isinstance(plan, list):
-                    return plan
-        except:
-            pass
+        # except:
+        #     pass
         
         # 如果解析失败，打印警告信息
         print(f"警告：无法解析LLM响应，使用默认计划。响应内容：{response}")

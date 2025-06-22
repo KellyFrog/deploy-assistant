@@ -1,6 +1,6 @@
 # 部署
 
-**本项目仅适用于 Windows PowerShell**.
+**本项目仅适用于 Windows PowerShell.** 
 
 - clone 本项目：
 

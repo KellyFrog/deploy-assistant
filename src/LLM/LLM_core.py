@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 from openai import OpenAI
 from typing import Generator, Optional
 from config.settings import Settings
-from LLM.stream_write import StreamLineWriter
+from utils.stream_write import StreamLineWriter
 
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
