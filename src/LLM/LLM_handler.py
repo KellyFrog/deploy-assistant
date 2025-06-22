@@ -1,6 +1,6 @@
 from config.settings import Settings
 from LLM.LLM_core import LLMClient
-from LLM.stream_write import StreamLineWriter
+from utils.stream_write import StreamLineWriter
 
 def next_item (achar):
 	return achar == 'ಠ'
