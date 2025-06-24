@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 24.1) (preloaded format=xelatex 2025.6.23)  23 JUN 2025 23:33
+This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 24.1) (preloaded format=xelatex 2025.6.23)  24 JUN 2025 23:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1242,12 +1242,12 @@ Package microtype Info: Character `textquotedblright ' is missing
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 258--259
+Underfull \hbox (badness 10000) in paragraph at lines 260--261
 []\TU/SimSun(1)/m/n/10.53937 中 期 记 忆：|  而 对 于 提 前 设 定 的 参 数
  []
 
 
-Underfull \hbox (badness 1635) in paragraph at lines 258--259
+Underfull \hbox (badness 1635) in paragraph at lines 260--261
 []$ |\TU/SimSun(1)/m/n/10.53937 （默 认 为 \TU/ptm/m/sc/10.53937 10\TU/SimSun(1)/m/
 n/10.53937 ） ，|  每 隔 这 么
  []
@@ -1256,20 +1256,19 @@ n/10.53937 ） ，|  每 隔 这 么
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [3]
-Underfull \hbox (badness 2707) in paragraph at lines 284--285
+Underfull \hbox (badness 2707) in paragraph at lines 286--287
 []\TU/SimSun(1)/m/n/10.53937 部 署 模 块：|  部 署 模 块 所 使 用 的 语 言 模 型 使 用
  []
-
-(main.bbl
-
-LaTeX Font Warning: Font shape `TU/ptm/m/it' undefined
-(Font)              using `TU/ptm/m/n' instead on input line 12.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-) [4]
-[5
+ (main.bbl
+
+LaTeX Font Warning: Font shape `TU/ptm/m/it' undefined
+(Font)              using `TU/ptm/m/n' instead on input line 12.
+
+) [4] [5
 
 ] (main.aux)
  ***********
