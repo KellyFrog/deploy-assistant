@@ -80,7 +80,26 @@ pip install -r requirements.txt
 
   示例情景：
 
-  【TO BE DONE】
+  输入：
+  
+  ```
+  deploy https://github.com/AlwaySleepy/Garment-Pile
+  ```
+  
+  输出：
+  
+  ```
+  部署计划:
+  1. 手动安装Isaac Sim 2023.1.1：下载后移动到~/.local/share/ov/pkg/并重命名为isaac-sim-2023.1.1，根据BUG_FIX.md修改meta-file
+  2. 克隆仓库：git clone https://github.com/AlwaySleepy/Garment-Pile.git
+  3. 手动下载Garment资产：从Google Drive链接下载并解压到Garment-Pile/Assets/目录
+  4. 为Isaac Sim环境安装依赖：C:\Users\AD\.local\share\ov\pkg\isaac-sim-2023.1.1\python.sh -m pip install termcolor plyfile
+  5. 创建conda环境：conda create -n garmentpile python=3.10
+  6. 激活conda环境并安装PyTorch：conda activate garmentpile && pip install torch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cu118
+  7. 安装项目依赖：cd Garment-Pile && pip install -r requirements.txt
+  ```
+  
+  注释：若不理解，可将上述计划中的可以使用命令行完成的步骤喂给 `??`.
 
 ## 注意事项
 
