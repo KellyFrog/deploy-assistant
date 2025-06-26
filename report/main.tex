@@ -48,6 +48,7 @@
 \usepackage{subfigure}
 \usepackage{booktabs} % for professional tables
 \usepackage{ctex}
+\usepackage{float} %设置图片浮动位置的宏包
 
 % hyperref makes hyperlinks in the resulting PDF.
 % If your build breaks (sometimes temporarily if a hyperlink spans a page)
@@ -107,7 +108,7 @@
 %示例，根据自己的背景更改
 \begin{icmlauthorlist}
 \icmlauthor{陈凯丰}{2400934023}
-\icmlauthor{队员姓名2}{背景1}
+\icmlauthor{李铭乐洋}{2400934034}
 \icmlauthor{队员姓名3}{背景1}
 \icmlauthor{队员姓名4}{背景2}
 \icmlauthor{队员姓名5}{背景2}
@@ -239,7 +240,7 @@ Prompt 首先给出记忆与环境信息，然后给出用户的需求以及过�
 
 一个细节是，由于命令的特殊性（包含大量如反斜杠等字符），经过了多次测试，为了避免生成信息内容对解析的干扰，我们采用了以特殊字符'{\kannada{ಠ}}'作为分割符号来进行 Prompt 工程：“...选项不用太多，要求内容精简直接，数量最多五个。每一个选项的格式是三元组：该选项对应的可供执行的Powershell cmd命令（一定是能在终端执行的命令！）{\kannada{ಠ}}该选项的说明{\kannada{ಠ}}该选项的注意事项{\kannada{ಠ}}。并且三元组都要给出内容，且以{\kannada{ಠ}}分隔，注意每一项后面都要加{\kannada{ಠ}}。”。采用此方案后，没有遇到过解析出错的情况。
 
-在出现问题的情况，将抛出错误。用户再次输入"??"即可重试。
+在出现问题的情况，将抛出错误。用户再次输入 “??” 即可重试。
 
 \subsubsection{安全检查}
 
@@ -257,7 +258,7 @@ Prompt 首先给出记忆与环境信息，然后给出用户的需求以及过�
 
 短期记忆将记录用户最近的若干条命令。
 
-中期记忆：而对于提前设定的参数 $\text{SHORT\_HISTORY}$（默认为 10），每隔这么多条消息之后，就将通过语言模型生成截至到目前为止的所有命令的总结，以节省记忆大小。
+中期记忆：而对于提前设定好的 truncated 超参数 $\text{SHORT\_HISTORY}$（默认为 10），每隔这么多条消息之后，就将通过语言模型生成截至到目前为止的所有命令的总结，以节省记忆大小。
 
 长期记忆：当用户关闭客户端，将调用记忆模块的长期记忆更新操作。记忆模块会利用语言模型，将之前的用户画像和此次命令行的中短期记忆进行总结，得到一份新的用户画像。用户画像包括了用户在命令行的行为习惯与偏好，熟悉程度，以及之前所在命令行做过的一些重要操作。
 
@@ -283,10 +284,19 @@ Prompt 首先给出记忆与环境信息，然后给出用户的需求以及过�
 
 记忆模块：在记忆模块的所有语言模型均使用 Qwen2.5-7B-Instruct。这是因为中长期记忆并不需要完全准确细致地进行总结，只需记录下用户做了些什么。并且当 $\text{SHORT\_HISTORY}$ 较小时，中期记忆可能会造成平凡的“卡顿”现象，使用更快的语言模型有助于缓解卡顿时间。
 
-部署模块：部署模块所使用的语言模型使用 DeepSeek-R1。这是因为 README 文件可能较长，需要较好的文本理解与推理能力才能找到有用信息。
+部署模块：部署模块调用 DeepSeek-R1。这是因为 README 文件可能较长，需要较好的文本理解与推理能力才能找到有用信息。
 
 \subsubsection{参数调优}
 
+在实现中模型由 topk 改动不明显与 temperature 的改动。因此我们主要进行了关于 temperature 的参数调优，而将 topk 固定为一个中性值 0.5 。
+
+对于解决用户个性化问题的模块，temperature 高时（如 1.2）给出的回答会较为丰富，且更加的有想象力。temperature 低时（如 0.3）给出的回答会较为平凡且严肃，缺乏创造力。因此对于该项功能，使用较高的 temperature 会让模型有更好的表现。
+
+对于 deploy 模块，temperature 无论高低，给出的回答都满足了需求的准确性。不过高 temperature 模型给出的回答用的文字数量明显更多，低 temperature 模型的回答更为简洁。因此对于该项功能，使用较低的 temperature 给出一个“严肃”的模型会更好。
+
+在 vanilla version 中，我们统一将 temperature 设为一个中性值 0.7 。这是可以按照功能模块个性化定制的，不过既然 deploy 的准确性表现几乎无关 temperature，选定一个统一的值也是合理的。
+
+在附录 A.1 中罗列了调优证据以及对它们的观察与总结。
 
 \subsection{评估对比}
 
@@ -300,9 +310,9 @@ Prompt 首先给出记忆与环境信息，然后给出用户的需求以及过�
 
 
 \begin{itemize}
-\item "实现核心功能闭环，需定义明确的输入输出规范并实现校验机制"。由于命令行的特殊性，不符合输入规范的命令将直接由命令行返回错误信息，这也符合用户在日常使用中的习惯。在已有足够完善的命令行自带的规范的情况下，我们认为额外引入除了"??"与"deploy"之外的其他特殊的规范不会起到积极的作用。
+\item “实现核心功能闭环，需定义明确的输入输出规范并实现校验机制”。由于命令行的特殊性，不符合输入规范的命令将直接由命令行返回错误信息，这也符合用户在日常使用中的习惯。在已有足够完善的命令行自带的规范的情况下，我们认为额外引入除了 “??” 和 “deploy” 之外的其他特殊的规范不会起到积极的作用。
 
-\item "实现输入预处理（敏感词过滤/指令注入防护）"。除去对用户输入命令的解析，我们并未做敏感词过滤等等其他的非平凡的预处理。这是因为我们希望至少用户能将其作为一个正常的命令行使用，并且用语言模型减少其使用门槛，而并非通过各种方式减少用户命令的自由度。
+\item “实现输入预处理（敏感词过滤/指令注入防护）”。除去对用户输入命令的解析，我们并未做敏感词过滤等等其他的非平凡的预处理。这是因为我们希望至少用户能将其作为一个正常的命令行使用，并且用语言模型减少其使用门槛，而并非通过各种方式减少用户命令的自由度。
 \end{itemize}
 
 \bibliography{example_paper}
@@ -319,10 +329,79 @@ Prompt 首先给出记忆与环境信息，然后给出用户的需求以及过�
 \onecolumn
 \section{附录}
 
-可以将一些额外的内容放在这里
+% 可以将一些额外的内容放在这里
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsection{temperature 调优证据展示}
+
+对于解决用户个性化问题的模块，我们采取了极端温度（1.2 / 0.3 / 0.05）以固定问题分别得到了两组回答（每组独立清空 memory）。
+
+\begin{figure}[H]
+\centering
+\subfigure[result 1]{
+\label{Fig.sub.1}
+\includegraphics[width=0.45\textwidth]{img_q/1.2 & 0.5 (1).png}}
+\subfigure[result 2]{
+\label{Fig.sub.2}
+\includegraphics[width=0.45\textwidth]{img_q/1.2 & 0.5 (2).png}}
+\caption{When the temperature is 1.2}
+\label{Fig.main}
+\end{figure}
+
+相对来说 1.2 给出了较为创造性的提议，但下面两则就显得有些“无聊”：
+
+\begin{figure}[H]
+\centering
+\subfigure[result 1]{
+\label{Fig.sub.1}
+\includegraphics[width=0.45\textwidth]{img_q/0.3 & 0.5 (1).png}}
+\subfigure[result 2]{
+\label{Fig.sub.2}
+\includegraphics[width=0.45\textwidth]{img_q/0.3 & 0.5 (2).png}}
+\caption{When the temperature is 0.3}
+\label{Fig.main}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfigure[result 1]{
+\label{Fig.sub.1}
+\includegraphics[width=0.45\textwidth]{img_q/0.05 & 0.5 (1).png}}
+\subfigure[result 2]{
+\label{Fig.sub.2}
+\includegraphics[width=0.45\textwidth]{img_q/0.05 & 0.5 (2).png}}
+\caption{When the temperature is 0.05}
+\label{Fig.main}
+\end{figure}
+
+对于 deploy 模块，由于大部分（著名）项目的部署都较为复杂，因此模型以给出建议为主。我们以 Flask（即 pallets/flask）和 GarmentPile（即 AlwaySleepy/Garment-Pile） 为例，展示所观察到的现象：
+
+\begin{figure}[H]
+\centering
+\subfigure[0.2]{
+\label{Fig.sub.1}
+\includegraphics[width=0.45\textwidth]{img_d/flask_0.2.png}}
+\subfigure[1.2]{
+\label{Fig.sub.2}
+\includegraphics[width=0.45\textwidth]{img_d/flask_1.2.png}}
+\caption{https://github.com/pallets/flask}
+\label{Fig.main}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfigure[0.2]{
+\label{Fig.sub.1}
+\includegraphics[width=0.45\textwidth]{img_d/gp_0.2.png}}
+\subfigure[1.2]{
+\label{Fig.sub.2}
+\includegraphics[width=0.45\textwidth]{img_d/gp_1.2.png}}
+\caption{https://github.com/AlwaySleepy/Garment-Pile}
+\label{Fig.main}
+\end{figure}
+
+两例的左图为 temperature=0.2 时的情况，右侧即为 1.2 。可以明显看到左侧较于右侧明显更为“严肃”。
 
 \end{document}
 

@@ -3,4 +3,4 @@ class Settings:
     RISK_THRESHOLD = 0.7        # 安全阈值
     LLM_TEMPURATURE = 0.7       # LLM 的温度设置
     LLM_TIMEOUT = 30            # API调用超时时间
-    TOP_P = 1                   # top_p
+    TOP_P = 0.5                   # top_p
