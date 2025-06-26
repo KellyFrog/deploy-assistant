@@ -1,0 +1,19 @@
+# Fdb version 4
+["pdflatex"] 1750922064.19841 "c:/Users/Little09/Documents/gitbox/deploy-assistant/report/main.tex" "main.pdf" "main" 1750922065.50404 2
+  "c:/Users/Little09/Documents/gitbox/deploy-assistant/report/main.tex" 1750922060 27093 a98768957ed1712ee3dac8e0e169beee ""
+  "c:/texlive/2024/texmf-dist/tex/latex/base/article.cls" 1738383586 20144 63d8bacaf52e5abf4db3bc322373e1d4 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/base/size10.clo" 1738383586 8448 5cf247d4bd0c7d5d711bbbdf111fae2e ""
+  "c:/texlive/2024/texmf-dist/tex/latex/fontspec/fontspec.sty" 1738381821 3755 4872b99d810c024f9c09bb1c62ffee3b ""
+  "c:/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1738383509 29785 9f93ab201fe5dd053afcc6c1bcf7d266 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/l3kernel/expl3.sty" 1738383521 6565 f51d809db6193fae7b06c1bc26ca8f75 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/l3packages/xparse/xparse.sty" 1738383556 9783 ab4bee47700c04aadedb8da27591b0ab ""
+  "c:/texlive/2024/texmf-dist/web2c/texmf.cnf" 1738378404 42021 a58d36c7ede3d2fc9f93da62d691ddff ""
+  "c:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1738389036 3352883 aa56e3da87e60cce3e19bd964128e28f ""
+  "c:/texlive/2024/texmf.cnf" 1738388794 713 e69b156964470283e0530f5060668171 ""
+  "main.aux" 1750922064 2965 eaa305d1bc1b0e30228eb79ce62558ca "pdflatex"
+  "main.tex" 1750922060 27093 a98768957ed1712ee3dac8e0e169beee ""
+  (generated)
+  "main.aux"
+  "main.log"
+  "main.pdf"
+  (rewritten before read)
