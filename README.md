@@ -16,6 +16,8 @@ pip install -r requirements.txt
 
 # 使用方法
 
+请使用 python 3.12 运行。
+
 - **运行**：打开项目文件夹，命令行输入命令
 
   `cd src`
