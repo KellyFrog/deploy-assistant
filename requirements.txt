@@ -2,3 +2,4 @@ certifi==2025.4.26
 cryptography==44.0.3
 openai==1.78.1
 pywinpty==2.0.15
+requests==2.32.4
